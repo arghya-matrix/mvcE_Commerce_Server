@@ -1,0 +1,128 @@
+const userServices = require("../services/user.services");
+
+const validateUser = async function (req, res, next) {
+  const data = req.body;
+  const regex = /^[A-Za-z\s'\-]+$ /;
+  console.log("Inside validate user");
+  if (data.firstName) {
+    if (
+      data.firstName == " " ||
+      data.firstName == null ||
+      data.firstName == undefined
+    ) {
+      res.send(422).json({
+        message: "Invalid First name",
+      });
+      return;
+    }
+    if (!regex.test(data.firstName)) {
+      res.status(400).json({
+        message: `Invalid Last Name`,
+      });
+      return;
+    }
+  }
+  if (data.lastName) {
+    if (
+      data.lastName == " " ||
+      data.lastName == null ||
+      data.lastName == undefined
+    ) {
+      res.send(422).json({
+        message: "Invalid First name",
+      });
+      return;
+    }
+    if (!regex.test(data.lastName)) {
+      res.status(400).json({
+        message: `Invalid Last Name`,
+      });
+      return;
+    }
+  }
+  next();
+};
+
+const validateEmail = async function (req, res, next) {
+  const email = req.body.EmailAddress;
+  const regex = /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}/;
+  if (!regex.test(email)) {
+    res.status(400).json({
+      message: "Invalid email format",
+    });
+    return;
+  }
+  next();
+};
+
+async function checkExistingUser(req, res, next) {
+  const email = req.body.EmailAddress;
+  const user = await userServices.getUserByEmail({
+    email: email,
+  });
+  if (user) {
+    res.status(409).json({
+      message: "user already signed up",
+    });
+    return;
+  }
+  next();
+}
+
+async function validatePassword(req, res, next) {
+  const regex = /^[^\s]*$/;
+  const password = req.body.password;
+  console.log("password", password);
+  if (!regex.test(password)) {
+    let errorMessage = "Password must meet the following criteria:\n";
+    errorMessage += "1. Start with an uppercase letter.\n";
+    errorMessage += "2. Contain at least three digits.\n";
+    errorMessage += "3. Include at least one special character.\n";
+    errorMessage += "4. Be at least 7 characters long.";
+
+    res.status(400).json({
+      message: errorMessage,
+    });
+    return;
+  } else {
+    next();
+  }
+}
+
+async function userAddressValidation(req, res, next) {
+  const data = req.body;
+  if (!data.address) {
+    return res.json({
+      message: `Address is needed to add shipping detail`,
+    });
+  }
+  if (!data.zip_code) {
+    return res.json({
+      message: `Zip Code is needed add shipping detail`,
+    });
+  }
+  if (!data.city) {
+    return res.json({
+      message: `City is needed to add shipping details`,
+    });
+  }
+  if (!data.state) {
+    return res.json({
+      message: `State is needed to add shipping Details`,
+    });
+  }
+  if (!data.country) {
+    return res.json({
+      message: `Country is needed to add shipping details`,
+    });
+  }
+  next();
+}
+
+module.exports = {
+  validateUser,
+  validateEmail,
+  checkExistingUser,
+  validatePassword,
+  userAddressValidation,
+};
