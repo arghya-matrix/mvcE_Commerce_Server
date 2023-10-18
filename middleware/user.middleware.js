@@ -91,6 +91,9 @@ async function validatePassword(req, res, next) {
 
 async function userAddressValidation(req, res, next) {
   const data = req.body;
+  const regex = /^[A-Za-z]+$/g;
+  const regexForZip = /^\d{6}$/;
+
   if (!data.address) {
     return res.json({
       message: `Address is needed to add shipping detail`,
@@ -114,6 +117,31 @@ async function userAddressValidation(req, res, next) {
   if (!data.country) {
     return res.json({
       message: `Country is needed to add shipping details`,
+    });
+  }
+  if (!regex.test(data.country)) {
+    return res.json({
+      message: `Country name should be a string`,
+    });
+  }
+  if (!regex.test(data.state)) {
+    return res.json({
+      message: `state name should be a string`,
+    });
+  }
+  if (!regex.test(data.city)) {
+    return res.json({
+      message: `City name should be a string`,
+    });
+  }
+  if (!regex.test(data.address)) {
+    return res.json({
+      message: `address name should be a string`,
+    });
+  }
+  if (!regexForZip.test(data.zip_code)) {
+    return res.json({
+      message: `Zip code should be a number with not more than 6 digit`,
     });
   }
   next();

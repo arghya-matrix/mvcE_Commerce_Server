@@ -7,6 +7,7 @@ const Order = require("./order");
 const OrderDetails = require("./order_details");
 const Inventory = require("./inventory");
 const Address = require("./userAddress");
+const Log = require("./logtable");
 
 User.hasMany(Cart, {
   foreignKey: "user_id",
@@ -85,9 +86,9 @@ Address.hasOne(OrderDetails, {
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
 });
-OrderDetails.belongsTo(Address,{
-  foreignKey: "shipped_to"
-})
+OrderDetails.belongsTo(Address, {
+  foreignKey: "shipped_to",
+});
 
 sequelize.sync({ alter: true });
 
@@ -101,4 +102,5 @@ module.exports = {
   Inventory,
   sequelize,
   Address,
+  Log,
 };

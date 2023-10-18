@@ -78,9 +78,50 @@ async function addAddress(req, res) {
   }
 }
 
+async function updateAddress(req, res) {
+  try {
+    const whereOptions = {};
+    const updateOptions = {};
+    whereOptions.id = req.query.address_id;
+    whereOptions.user_id = req.userdata.user_id
+    updateOptions = req.body;
+    const update = await userServices.updateAddress({
+      updateOptions : updateOptions,
+      whereOptions:whereOptions
+    })
+    res.status(200).json({
+      message : `User address updated`
+    })
+  } catch (error) {
+    console.log(error,"<--- Error!!!!");
+    res.status(500).json({
+      message : `Server Error`,
+      error: error
+    })
+  }
+}
+
+async function deleteAddress(req,res){
+  try {
+    await userServices.deleteAddress({
+      id: req.query.address_id
+    })
+    res.status(200).json({
+      message:`Address deleted`
+    })
+  } catch (error) {
+    console.log(error,"<<<---Error!!!");
+    res.status(500).json({
+      message : `Server error`
+    })
+  }
+}
+
 module.exports = {
   getAll,
   update,
   deleteUser,
-  addAddress
+  addAddress,
+  updateAddress,
+  deleteAddress
 };

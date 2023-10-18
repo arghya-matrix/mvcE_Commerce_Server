@@ -41,7 +41,7 @@ async function addAddress({ createObject }) {
   return address;
 }
 
-async function updateAddress(updateOptions, whereOptions) {
+async function updateAddress({updateOptions, whereOptions}) {
   await db.Address.update(updateOptions, {
     where: whereOptions,
   });
@@ -60,6 +60,14 @@ async function getUserAddress({ whereOptions }) {
   return address;
 }
 
+async function deleteAddress({id}){
+  await db.Address.destroy({
+    where :{
+      id: id
+    }
+  })
+}
+
 module.exports = {
   getAll,
   updateUser,
@@ -68,4 +76,5 @@ module.exports = {
   addAddress,
   updateAddress,
   getUserAddress,
+  deleteAddress
 };
